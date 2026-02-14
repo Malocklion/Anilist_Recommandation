@@ -1,0 +1,24 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (au cas où)
+node_modules/
+package-lock.json
+
+# Packages de distribution
+*.zip
+*.crx
+*.pem
+
+# Fichier de config personnel (contient le Client ID de l'utilisateur)
+# Chaque utilisateur doit créer le sien — voir README.md
+# config.js  ← décommentez cette ligne si vous y mettez votre vrai Client ID

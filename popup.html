@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=800, initial-scale=1.0" />
+  <title>AniList Smart Recommendations</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  HEADER                                     -->
+  <!-- ═══════════════════════════════════════════ -->
+  <header class="app-header">
+    <div class="header-left">
+      <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28">
+        <path d="M6.2 2.44L18.1 14.34L20.22 12.22L21.63 13.63L19.16 16.1L22.34 19.28C22.73 19.67 22.73 20.3 22.34 20.69L21.63 21.4C21.24 21.79 20.61 21.79 20.22 21.4L17.04 18.22L14.56 20.7L13.15 19.29L15.27 17.17L3.37 5.27C2.98 4.88 2.98 4.25 3.37 3.86L4.08 3.15C4.47 2.76 5.1 2.76 5.49 3.15L6.2 2.44Z" fill="currentColor"/>
+      </svg>
+      <h1>AniList <span class="accent">Recommendations</span></h1>
+    </div>
+    <div class="header-right">
+      <!-- Auth controls -->
+      <div id="user-profile" class="user-profile" style="display:none;">
+        <img id="user-avatar" class="user-avatar" src="" alt="" />
+        <span id="user-name" class="user-name"></span>
+      </div>
+      <button id="login-btn" class="auth-btn login-btn" title="Se connecter avec AniList">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>
+        Connexion
+      </button>
+      <button id="logout-btn" class="auth-btn logout-btn" style="display:none;" title="Se déconnecter">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" fill="currentColor"/></svg>
+      </button>
+      <a id="debug-link" href="#" class="debug-link" title="Ouvrir l'inspecteur debug">🔍</a>
+      <button id="refresh-btn" class="auth-btn refresh-btn" style="display:none;" title="Relancer l'analyse">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/></svg>
+        Actualiser
+      </button>
+      <span class="stats-badge" id="stats-badge" title="Nombre de recommandations"></span>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  SEARCH / USERNAME INPUT                    -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="search-section" id="search-section">
+    <div class="input-group">
+      <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18">
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+      </svg>
+      <input type="text" id="username-input" placeholder="Entrez votre pseudo AniList…" spellcheck="false" autocomplete="off" />
+      <button id="fetch-btn" title="Lancer l'analyse">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <p class="hint">Votre pseudo AniList (ex: <em>Josh</em>)</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  STATUS / LOADER                            -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="status-section" id="status-section" style="display:none;">
+    <div class="loader-wrapper">
+      <div class="loader-ring"></div>
+      <p class="status-text" id="status-text">Chargement…</p>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  ERROR                                      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="error-section" id="error-section" style="display:none;">
+    <div class="error-card">
+      <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/></svg>
+      <p id="error-text">Erreur inconnue</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  STALE CACHE BANNER                        -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="stale-banner" id="stale-banner" style="display:none;">
+    ⚠️ Données périmées — Cliquer ici pour actualiser
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  FILTERS BAR                                -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="filters-section" id="filters-section" style="display:none;">
+    <!-- Format filters (TV / Movie / OVA …) -->
+    <div class="filters-row" id="format-filters-row"></div>
+    <!-- Genre filters -->
+    <div class="filters-row" id="genre-filters-row"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  RECOMMENDATION GRID                        -->
+  <!-- ═══════════════════════════════════════════ -->
+  <main class="grid-container" id="grid-container" style="display:none;"></main>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  BACKSTAGE PANEL (slide-over)               -->
+  <!-- ═══════════════════════════════════════════ -->
+  <aside class="backstage-overlay" id="backstage-panel">
+    <div class="backstage-drawer">
+      <button class="backstage-close-btn" id="backstage-close">✕</button>
+
+      <h2 class="backstage-heading">Pourquoi cette recommandation ?</h2>
+      <h3 class="backstage-anime-title" id="backstage-title"></h3>
+      <p class="backstage-score-line" id="backstage-score"></p>
+
+      <div class="backstage-section">
+        <h4>Détail du calcul</h4>
+        <ul class="backstage-reasons-list" id="backstage-reasons"></ul>
+      </div>
+
+      <div class="backstage-section">
+        <h4>Tags communs avec votre profil</h4>
+        <div class="backstage-tags-row" id="backstage-tags"></div>
+      </div>
+    </div>
+  </aside>
+
+  <script src="config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
