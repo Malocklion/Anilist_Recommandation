@@ -96,7 +96,7 @@ Each recommended anime is assigned a **Relevance Score**:
 
 ```mermaid
 graph TD
-    A[Favorites (Max 15) + Top Rated (Max 10)] --> B[Compound GraphQL Queries]
+    A["Favorites (Max 15) + Top Rated (Max 10)"] --> B[Compound GraphQL Queries]
     B --> C[Filtering]
     C --> D[Score Calculation]
     D --> E[Sort & Diversify]
@@ -153,4 +153,3 @@ Distributed under the MIT License. Feel free to use, modify, and distribute prop
 ## 🙏 Credits
 
 - Data provided by the [AniList API](https://anilist.gitbook.io/anilist-apiv2-docs/).
-- UI design inspired by modern streaming platforms.
